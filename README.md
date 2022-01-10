@@ -1,6 +1,7 @@
 # Cloud Skills Monitoring Server
 
-![License](https://img.shields.io/github/license/Jennas-Lee/cloud-skills-monitoring-server)
+[![build](https://github.com/Jennas-Lee/cloud-skills-monitoring-server/actions/workflows/main.yml/badge.svg)](https://github.com/Jennas-Lee/cloud-skills-monitoring-server/actions/workflows/main.yml)
+[![License](https://img.shields.io/github/license/Jennas-Lee/cloud-skills-monitoring-server)](https://github.com/Jennas-Lee/cloud-skills-monitoring-server/blob/v0.0.1/LICENSE)
 ![Version](https://img.shields.io/github/package-json/v/Jennas-Lee/cloud-skills-monitoring-server)
 
 - [Introduction](#introduction)
