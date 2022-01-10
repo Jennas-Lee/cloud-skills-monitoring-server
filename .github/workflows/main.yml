@@ -1,4 +1,4 @@
-name: Docker
+name: build
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ lowercase(github.repository) }}
+  IMAGE_NAME: ${{ github.repository }}
 
 
 jobs:
@@ -22,8 +22,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set env
+      - name: Set release version env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
+
+      - name: Set downcase image name
+          run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v1
@@ -43,5 +46,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+            ${{ env.REGISTRY }}/${{ env.REPO }}:latest
+            ${{ env.REGISTRY }}/${{ env.REPO }}:${{ env.RELEASE_VERSION }}
