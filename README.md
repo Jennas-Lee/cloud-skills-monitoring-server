@@ -24,12 +24,12 @@ You can use docker-compose or run only streaming server.
 ### Pull and Run Streaming Server Only
 
 ``` shell
-docker pull ghcr.io/cloud-skills-monitoring-server:latest
+docker pull ghcr.io/jennas-lee/cloud-skills-monitoring-server:latest
 docker run -itd \
     -p 1935:1935 \
     -p <PORT>:8000 \
     -v <RECORDED MEDIA DIRECTORY>:/media \
-    ghcr.io/cloud-skills-monitoring-server:latest
+    ghcr.io/jennas-lee/cloud-skills-monitoring-server:latest
 ```
 
 ## Set OBS Studio
