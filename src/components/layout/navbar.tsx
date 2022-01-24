@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,11 +11,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import Link from '@mui/material/Link';
 
 const pages = ['Cams', 'Dashboard'];
-const settings = ['Account', 'Logout'];
+// const settings = ['Account', 'Logout'];
+const settings = [
+  ['Sign In', '/signin'],
+  ['Sign Up', '/signup'],
+]
 
 const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -44,7 +50,15 @@ const Navbar = () => {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-            클라우드컴퓨팅 기능경기대회 모니터링
+            <Link
+              to="/"
+              component={RouterLink}
+              aria-current="page"
+              color="inherit"
+              underline="none"
+            >
+              클라우드컴퓨팅 기능경기대회 모니터링
+            </Link>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -89,7 +103,15 @@ const Navbar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            클라우드컴퓨팅 기능경기대회 모니터링
+            <Link
+              to="/"
+              component={RouterLink}
+              aria-current="page"
+              color="inherit"
+              underline="none"
+            >
+              클라우드컴퓨팅 기능경기대회 모니터링
+            </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
@@ -104,11 +126,9 @@ const Navbar = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar>이</Avatar>
-              </IconButton>
-            </Tooltip>
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <Avatar>?</Avatar>
+            </IconButton>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -126,8 +146,18 @@ const Navbar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">
+                    <Link
+                      to={setting[1]}
+                      component={RouterLink}
+                      aria-current="page"
+                      color="inherit"
+                      underline="none"
+                    >
+                      {setting[0]}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
