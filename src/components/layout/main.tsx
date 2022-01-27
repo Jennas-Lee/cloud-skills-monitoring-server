@@ -1,4 +1,5 @@
 import CssBaseline from '@mui/material/CssBaseline';
+import axios from 'axios';
 import React from 'react';
 
 import Box from '@mui/material/Box';
@@ -27,6 +28,9 @@ const Main = () => {
           sx={{ textAlign: "center" }}>
           2022-04-05 ~ 2022-04-08
         </Typography>
+        <button onClick={() => {
+          console.log(axios.defaults.headers.common['Authorization']);
+        }}>테스트</button>
       </Box>
     </Container>
   );

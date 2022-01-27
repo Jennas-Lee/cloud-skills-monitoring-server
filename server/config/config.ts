@@ -6,7 +6,8 @@ const config = {
     host: '10.0.0.7',
     port: 5432,
     dialect: 'postgres',
-    timezone: '+09:00'
+    timezone: '+09:00',
+    logging: console.log
   },
   production: {
     username: process.env.EXPRESS_APP_DATABASE_USERNAME,
@@ -15,7 +16,8 @@ const config = {
     host: process.env.EXPRESS_APP_DATABASE_HOST,
     port: process.env.EXPRESS_APP_DATABASE_PORT,
     dialect: 'postgres',
-    timezone: '+09:00'
+    timezone: '+09:00',
+    logging: false
   },
 }
 

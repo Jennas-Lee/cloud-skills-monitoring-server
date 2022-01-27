@@ -17,14 +17,16 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 type dataObjectType = {
-  [index: string]: string
-  email: string
-  password: string
+  [index: string]: string;
+  email: string;
+  password: string;
+  access_token: string;
 }
 
 const defaultData: dataObjectType = {
   "email": "",
-  "password": ""
+  "password": "",
+  "access_token": ""
 }
 
 const SignIn = () => {
@@ -38,6 +40,7 @@ const SignIn = () => {
 
     if (!loading) {
       setLoading(true);
+
       axios({
         method: 'POST',
         url: process.env.REACT_APP_API_HOST + '/api/auth/signin',
@@ -45,14 +48,14 @@ const SignIn = () => {
           email: data.get('email'),
           password: data.get('password'),
         },
-        withCredentials: true,
       })
         .then((response) => {
-          axios.defaults.headers.common['Authorization'] = response.data.access_token;
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
+          console.log(axios.defaults.headers.common['Authorization']);
           navigate('/');
         })
         .catch((error) => {
-          if (error.response) {
+          if (error.response.status === 400) {
             setData(error.response.data);
           } else {
             alert('오류가 발생했습니다.');

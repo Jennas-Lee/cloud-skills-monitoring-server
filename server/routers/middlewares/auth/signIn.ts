@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import * as bcrypt from 'bcrypt';
+import passport from 'passport';
+import jwt from 'jsonwebtoken';
 
-import userFactory from '../../../models/users';
+import tokenFactory from '../../../models/tokens';
 
-const User = userFactory;
+const token = tokenFactory();
 
-const validateEmail = async (email: string) => {
+const ACCESS_SECRET_KEY: string = process.env.EXPRESS_APP_ACCESS_SECRET_KEY || 'jwt-access-secret-key';
+const REFRESH_SECRET_KEY: string = process.env.EXPRESS_APP_REFRESH_SECRET_KEY || 'jwt-refresh-secret-key';
+
+const validateEmail = (email: string) => {
   let message: string = "";
   const emailRegex = /^([\w\.\_\-])*[a-zA-Z0-9]+([\w\.\_\-])*([a-zA-Z0-9])+([\w\.\_\-])+@([a-zA-Z0-9]+\.)+[a-zA-Z0-9]{2,8}$/;
 
@@ -28,60 +32,69 @@ const validatePassword = (password: string) => {
   return message;
 }
 
-const validateUser = async (email: string, password: string) => {
-  const hash = await bcrypt.hash(password, 15)
-  // TODO: use try-catch
-  const user = await User().count({
-    where: {
-      email: email,
-      password: password
-    }
-  });
-  let access_token = "";
-
-  if (user) {
-    // TODO: create access token to use jwt
-    access_token = "d";
-  }
-
-  return access_token;
-}
-
 const signIn = async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
+  let res_body = {
+    "email": "",
+    "password": "",
+    "access_token": "",
+    "refresh_token": ""
+  }
+  let res_status = 0;
+
+  res_body.email = validateEmail(email);
+  res_body.password = validatePassword(password);
+
   try {
-    const { email, password } = req.body;
-    let res_body = {
-      "email": "",
-      "password": "",
-      "access_token": "",
-    }
-    let res_status = 0
-
-    res_body.email = await validateEmail(email);
-    res_body.password = validatePassword(password);
-
     if (Object.values(res_body).join('')) {
       res_status = 400;
+
+      return res.status(res_status).json(res_body);
     } else {
-      try {
-        const hash = await bcrypt.hash(password, 15);
-        res_body.access_token = validateUser(email, hash);
+      passport.authenticate('local', (passportError, user, info) => {
+        if (passportError || !user) {
+          res_status = 400;
 
-        if(res_body.access_token !== "") {
-          res_status = 200;
+          if (info.reason === '1') {
+            res_body.email = '찾을 수 없는 사용자입니다.';
+          } else if (info.reason === '2') {
+            res_body.password = '비밀번호가 올바르지 않습니다.';
+          } else {
+            return next(info.reason);
+          }
         } else {
-          res_status = 403;
-          res_body.access_token = "이메일을 찾을 수 없거나 비밀번호가 잘못되었습니다.";
-        }
-      } catch (e) {
-        console.error(e);
-        return next(e)
-      }
-    }
+          req.login(user, { session: false }, (loginError) => {
+            if (loginError) {
+              next(loginError);
+            } else {
+              const access_token = jwt.sign(
+                { user: user.id, isAdmin: user.isAdmin },
+                ACCESS_SECRET_KEY,
+                { expiresIn: '1h' }
+              );
+              const refresh_token = jwt.sign(
+                {},
+                REFRESH_SECRET_KEY,
+                { expiresIn: '8h' }
+              );
 
-    return res.status(res_status).json(res_body);
+              token.create({ token: refresh_token });
+
+              res_status = 200;
+              res_body.access_token = access_token;
+              res_body.refresh_token = refresh_token;
+
+              res.cookie('refresh_token', refresh_token, { httpOnly: true })
+            }
+          });
+        }
+
+        res.status(res_status).json(res_body);
+      })(req, res);
+    }
   } catch (e) {
     console.error(e);
+    return next(e);
   }
 }
 

@@ -2,7 +2,13 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '../models';
 
 const userFactory = () => {
-  class Users extends Model {}
+  class Users extends Model {
+    name!: string;
+    company!: string;
+    email!: string;
+    password!: string;
+    isAdmin!: boolean;
+  }
 
   Users.init({
     name: {

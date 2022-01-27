@@ -114,6 +114,7 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(res_status).json(res_body);
   } catch (e) {
     console.error(e);
+    next(e);
   }
 }
 

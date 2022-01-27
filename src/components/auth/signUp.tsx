@@ -22,12 +22,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 type dataObjectType = {
-  [index: string]: string
-  name: string
-  company: string
-  email: string
-  password: string
-  confirm_password: string
+  [index: string]: string;
+  name: string;
+  company: string;
+  email: string;
+  password: string;
+  confirm_password: string;
 }
 
 const defaultData: dataObjectType = {
@@ -65,7 +65,7 @@ const SignUp = () => {
           setOpen(true);
         })
         .catch((error) => {
-          if (error.response) {
+          if (error.response.status === 400) {
             setData(error.response.data);
           } else {
             alert('오류가 발생했습니다.');
