@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import passport from 'passport';
@@ -16,14 +17,18 @@ interface ErrorWithStatus extends Error {
 
 const app: express.Application = express();
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
+const COOKIE_SIGNATURE_KEY: string = process.env.EXPRESS_APP_COOKIE_SIGNITURE_KEY || 'cookie-signature-key';
 
 app.set('port', process.env.PORT || 3001);
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser(COOKIE_SIGNATURE_KEY))
 app.use(cors({
-  origin: NODE_ENV == 'development' ? 'http://localhost:3000' : '', // TODO: CORS setting with domain
   credentials: true,
+  exposedHeaders: ['Authorization'],
+  origin: NODE_ENV === 'development' ? true : '', // TODO: CORS setting with domain
+
 }));
 app.use(morgan(NODE_ENV == 'development' ? 'dev' : 'combined'));
 app.use(passport.initialize());

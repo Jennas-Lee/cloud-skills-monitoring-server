@@ -1,13 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
-import jwt from 'jsonwebtoken';
 
 import tokenFactory from '../../../models/tokens';
+import { createToken } from './token';
+
+interface responseDataType {
+  email?: string;
+  password?: string;
+}
 
 const token = tokenFactory();
-
-const ACCESS_SECRET_KEY: string = process.env.EXPRESS_APP_ACCESS_SECRET_KEY || 'jwt-access-secret-key';
-const REFRESH_SECRET_KEY: string = process.env.EXPRESS_APP_REFRESH_SECRET_KEY || 'jwt-refresh-secret-key';
 
 const validateEmail = (email: string) => {
   let message: string = "";
@@ -34,12 +36,7 @@ const validatePassword = (password: string) => {
 
 const signIn = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
-  let res_body = {
-    "email": "",
-    "password": "",
-    "access_token": "",
-    "refresh_token": ""
-  }
+  let res_body: responseDataType = {}
   let res_status = 0;
 
   res_body.email = validateEmail(email);
@@ -67,28 +64,23 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
             if (loginError) {
               next(loginError);
             } else {
-              const access_token = jwt.sign(
-                { user: user.id, isAdmin: user.isAdmin },
-                ACCESS_SECRET_KEY,
-                { expiresIn: '1h' }
-              );
-              const refresh_token = jwt.sign(
-                {},
-                REFRESH_SECRET_KEY,
-                { expiresIn: '8h' }
-              );
+              const access_token = createToken(false, user);
+              const refresh_token = createToken(true);
 
-              token.create({ token: refresh_token });
+              token.create({ token: refresh_token.replace('Bearer ', '') });
 
               res_status = 200;
-              res_body.access_token = access_token;
-              res_body.refresh_token = refresh_token;
-
-              res.cookie('refresh_token', refresh_token, { httpOnly: true })
+              res.header('Authorization', access_token);
+              res.cookie('Authorization', refresh_token, {
+                httpOnly: true,
+                maxAge: 28800000,
+                signed: true,
+                sameSite: 'none',  // TODO: development only
+                secure: true
+              });
             }
           });
         }
-
         res.status(res_status).json(res_body);
       })(req, res);
     }

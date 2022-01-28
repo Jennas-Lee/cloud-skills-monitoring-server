@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import { createTheme, Theme, ThemeProvider } from '@mui/material/styles';
@@ -18,6 +18,11 @@ const THEME: Theme = createTheme({
 });
 
 const App = () => {
+  useEffect(() => {
+    console.log('done');
+  });
+
+
   return (
     <ThemeProvider theme={THEME}>
       <Navbar/>

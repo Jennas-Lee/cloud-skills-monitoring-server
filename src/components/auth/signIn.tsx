@@ -20,13 +20,11 @@ type dataObjectType = {
   [index: string]: string;
   email: string;
   password: string;
-  access_token: string;
 }
 
 const defaultData: dataObjectType = {
   "email": "",
-  "password": "",
-  "access_token": ""
+  "password": ""
 }
 
 const SignIn = () => {
@@ -50,8 +48,8 @@ const SignIn = () => {
         },
       })
         .then((response) => {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`;
-          console.log(axios.defaults.headers.common['Authorization']);
+          console.log(response.headers.authorization);
+          axios.defaults.headers.common['Authorization'] = response.headers.authorization;
           navigate('/');
         })
         .catch((error) => {
