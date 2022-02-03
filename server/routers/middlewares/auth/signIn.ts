@@ -70,10 +70,17 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
               token.create({ token: refresh_token.replace('Bearer ', '') });
 
               res_status = 200;
-              res.header('Authorization', access_token);
-              res.cookie('Authorization', refresh_token, {
+              // res.header('Authorization', access_token);
+              res.cookie('Authorization', access_token, {
+                httpOnly: false,
+                maxAge: 86400000,
+                signed: false,
+                sameSite: 'none',  // TODO: development only
+                secure: true
+              });
+              res.cookie('Refresh', refresh_token, {
                 httpOnly: true,
-                maxAge: 28800000,
+                maxAge: 86400000,
                 signed: true,
                 sameSite: 'none',  // TODO: development only
                 secure: true

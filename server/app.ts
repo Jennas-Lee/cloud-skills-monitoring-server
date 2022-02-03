@@ -4,7 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import passport from 'passport';
 
-import passportReady from './passport/index';
+import { localPassportReady } from './passport/local';
+import { jwtPassportReady } from './passport/jwt';
 
 import sequelize from './models';
 import migrate from './config/migration';
@@ -33,7 +34,8 @@ app.use(cors({
 app.use(morgan(NODE_ENV == 'development' ? 'dev' : 'combined'));
 app.use(passport.initialize());
 
-passportReady();
+localPassportReady();
+jwtPassportReady();
 
 app.use('/api', api);
 

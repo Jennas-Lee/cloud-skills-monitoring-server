@@ -2,7 +2,7 @@ import { NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import tokenFactory from '../../../models/tokens';
 
-interface payloadDataType {
+export interface payloadDataType {
   user?: string;
   isAdmin?: boolean;
 }
@@ -15,7 +15,7 @@ const token = tokenFactory();
 export const createToken = (type: boolean, user?: any): string => {
   const payload: payloadDataType = {}
   const SECRET: string = type ? REFRESH_SECRET_KEY : ACCESS_SECRET_KEY;
-  const EXPIRES_IN: string = type ? '8h' : '1h';
+  const EXPIRES_IN: string = type ? '8h' : '1m';
 
   // access token
   if (!type) {

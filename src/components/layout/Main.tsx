@@ -35,7 +35,7 @@ const Main = () => {
             url: process.env.REACT_APP_API_HOST + '/api/auth/refresh',
           })
             .then((response) => {
-              // console.log(axios.defaults.withCredentials);
+              console.log(true);
             })
             .catch((error) => {
               if (error.response.status === 400) {

@@ -6,12 +6,12 @@ import userFactory from '../models/users';
 
 const User = userFactory();
 
-const passportConfig = {
+const localPassportConfig = {
   usernameField: 'email',
   passwordField: 'password'
 }
 
-const passportVerify = async (email: string, password: string, done: any) => {
+const localPassportVerify = async (email: string, password: string, done: any) => {
   try {
     const user = await User.findOne({ where: { email: email } });
 
@@ -34,8 +34,7 @@ const passportVerify = async (email: string, password: string, done: any) => {
   }
 }
 
-const passportReady = () => {
-  passport.use('local', new LocalStrategy(passportConfig, passportVerify));
+export const localPassportReady = () => {
+  passport.use('local', new LocalStrategy(localPassportConfig, localPassportVerify));
 }
 
-export default passportReady;

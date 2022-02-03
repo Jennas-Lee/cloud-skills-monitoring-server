@@ -20,8 +20,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "outDir": "./dist",
+    "typeRoots": [
+      "./server/types"
+    ]
   },
   "include": [
     "src"
-  ]
+  ],
 }

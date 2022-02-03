@@ -1,27 +1,77 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu';
+import PersonIcon from '@mui/icons-material/Person';
 
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import React, { useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+
+import { authenticatedProps, settingsProps } from '../middlewares/props';
 
 const pages = ['Cams', 'Dashboard'];
-// const settings = ['Account', 'Logout'];
-const settings = [
-  ['Sign In', '/signin'],
-  ['Sign Up', '/signup'],
-]
 
-const Navbar = () => {
+const UserAvatar = (props: authenticatedProps) => {
+  if (props.authenticated) {
+    return (
+      <Avatar>
+        <PersonIcon/>
+      </Avatar>
+    )
+
+  } else {
+    return (
+      <Avatar>?</Avatar>
+    )
+  }
+}
+
+const SettingMenu = (props: settingsProps) => {
+  let settings: string[][] = [];
+
+  if (props.authenticated) {
+    settings.push(['Account', '/auth/account']);
+    settings.push(['Sign Out', '/auth/signout']);
+  } else {
+    settings.push(['Sign In', '/auth/signin']);
+    settings.push(['Sign Up', '/auth/signup']);
+  }
+
+  return (
+    <>
+      {settings.map((setting) => (
+        <MenuItem key={setting[0]} onClick={props.handleCloseUserMenu}>
+          <Typography textAlign="center">
+            <Link
+              to={setting[1]}
+              component={RouterLink}
+              aria-current="page"
+              color="inherit"
+              underline="none"
+            >
+              {setting[0]}
+            </Link>
+          </Typography>
+        </MenuItem>
+      ))}
+    </>
+  )
+}
+
+const Navbar = (props: authenticatedProps) => {
+  // let settings: string[][] = [
+  //   ['Sign In', '/signin'],
+  //   ['Sign Up', '/signup'],
+  // ];
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -39,6 +89,11 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  useEffect(() => {
+    console.log(props.authenticated)
+
+  });
 
   return (
     <AppBar position="static">
@@ -127,7 +182,7 @@ const Navbar = () => {
 
           <Box sx={{ flexGrow: 0 }}>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar>?</Avatar>
+              <UserAvatar authenticated={props.authenticated}/>
             </IconButton>
             <Menu
               sx={{ mt: '45px' }}
@@ -145,21 +200,7 @@ const Navbar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting[0]} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">
-                    <Link
-                      to={setting[1]}
-                      component={RouterLink}
-                      aria-current="page"
-                      color="inherit"
-                      underline="none"
-                    >
-                      {setting[0]}
-                    </Link>
-                  </Typography>
-                </MenuItem>
-              ))}
+              <SettingMenu handleCloseUserMenu={handleCloseUserMenu} authenticated={props.authenticated}/>
             </Menu>
           </Box>
         </Toolbar>
