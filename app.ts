@@ -3,20 +3,25 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import passport from 'passport';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
-import { localPassportReady } from './passport/local';
-import { jwtPassportReady } from './passport/jwt';
+import { localPassportReady } from './src/passport/local';
+import { jwtPassportReady } from './src/passport/jwt';
 
-import sequelize from './models';
-import migrate from './config/migration';
+import sequelize from './src/models';
+import migrate from './src/config/migration';
 
-import api from './routers/apiController';
+import options from './src/config/swagger';
+
+import api from './src/routers/apiController';
 
 interface ErrorWithStatus extends Error {
   status: number;
 }
 
 const app: express.Application = express();
+const specs: object = swaggerJSDoc(options);
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
 const COOKIE_SIGNATURE_KEY: string = process.env.EXPRESS_APP_COOKIE_SIGNITURE_KEY || 'cookie-signature-key';
 
@@ -38,6 +43,7 @@ localPassportReady();
 jwtPassportReady();
 
 app.use('/api', api);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   let err = new Error() as ErrorWithStatus;
@@ -59,7 +65,7 @@ app.listen(app.get('port'), async () => {
       console.log('Database Connection Successful!');
       await migrate;
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.error('Database Connection Failed!', error);
     });
 });

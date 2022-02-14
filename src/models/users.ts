@@ -1,6 +1,32 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../models';
 
+/**
+ * @swagger
+ *  components:
+ *    schemas:
+ *      User:
+ *        type: object
+ *        required:
+ *          - name
+ *          - company
+ *          - email
+ *          - password
+ *          - isAdmin
+ *        properties:
+ *          name:
+ *            type: string
+ *          company:
+ *            type: string
+ *          email:
+ *            type: string
+ *            format: email
+ *          password:
+ *            type: string
+ *          isAdmin:
+ *            type: boolean
+ */
+
 const userFactory = () => {
   class Users extends Model {
     name!: string;

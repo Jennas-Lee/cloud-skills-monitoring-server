@@ -21,7 +21,7 @@
     "jsx": "react-jsx",
     "outDir": "./dist",
     "typeRoots": [
-      "./server/types"
+      "./src/types"
     ]
   },
   "include": [

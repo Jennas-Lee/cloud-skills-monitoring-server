@@ -1,6 +1,19 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../models';
 
+/**
+ * @swagger
+ *  components:
+ *    schemas:
+ *      Token:
+ *        type: object
+ *        required:
+ *          - token
+ *        properties:
+ *          token:
+ *            type: string
+ */
+
 const tokenFactory = () => {
   class Tokens extends Model {
     token!: string;
